@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <%- include('style'); -%>
+  </head>
+  <body>
+    <%- include('header'); -%>
+    <div class="container-fluid">
+      <div class="row mt-5">
+        <div class="col-2">
+          <div class="card">
+              <!-- <img src="..." class="card-img-top" alt="..."> -->
+              <div class="card-body">
+                <h5 class="card-title"><span class="text-secondary">Name:</span> <%= user.name %></h5>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><span class="text-secondary">Age: </span><%= user.age %></li>
+                <li class="list-group-item"><span class="text-secondary">Weight: </span><%= user.weight %></li>
+                <li class="list-group-item"><span class="text-secondary">Height: </span><%= user.height %></li>
+                <li class="list-group-item"><span class="text-secondary">Sex: </span><%= user.sex %></li>
+                <li class="list-group-item"><span class="text-secondary">Norm: </span><%= user.norma %></li>
+              </ul>
+              <div class="card-body">
+                <a href="/user/edit/<%= user._id %>" class="btn btn-primary">Edit</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-10">
+            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+          </div>
+        <div class="col-6 mt-3" style="max-height: 100vh; overflow: auto;">
+          <table class="table table-striped border">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Amount in gramms</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+              let j = 0;
+              products.forEach(function(product) {
+              %>
+                  <tr>
+                    <th scope="row"><div class="py-1"><%= ++j %></div></th>
+                    <td><div class="py-1 pName"><%= product.name %></div></td>
+                    <td><div class="py-1 pCalories"><%= product.calories %></div></td>
+                    <td><input type="number"  class="form-control" name="amount" value="100"></td>
+                    <td><button data-add="<%= product._id %>" class="btn-primary btn addproduct w-100" >Add</button></td>
+                  </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-6 mt-3" style="max-height: 100vh; overflow: auto;">
+          <table class="table table-striped border">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Name</th>
+                <th scope="col">Calories</th>
+                <th scope="col">Amount</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+              let i = 0;
+              if( user.productAll.length != 0) {
+                user.productAll.forEach(function(product) {
+                %>
+                    <tr class="addedProductTable">
+                      <th scope="row"><div class="py-1"><%= ++i %></div></th>
+                      <td><div class="py-1 addDate"><%= product.date %></div></td>
+                      <td><div class="py-1"><%= product.name %></div></td>
+                      <td><div class="py-1 addCalories"><%= product.calories %></div></td>
+                      <td><div class="py-1"><%= product.amount %></div></td>
+                      <td><button data-add="<%= product._id %>" class="btn-primary btn addproduct w-100" >Remove</button></td>
+                    </tr>
+                <% });
+                } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <%- include('script');-%>
+    <script>
+
+      function dataArr(){
+        var dataArr = [];
+        if(!dataArr.contains($('.addDate').text())) {
+          dataArr.push({x: $('.addDate').text(), y: $('.addDate').parents("tr").find('.addCalories').text()});
+        }
+        return dataArr;
+      }
+
+      window.onload = function () {
+
+      var chart = new CanvasJS.Chart("chartContainer", {
+      	animationEnabled: true,
+      	title: {
+      		text: "Calories chart"
+      	},
+      	axisX: {
+      		valueFormatString: "MMM YY"
+      	},
+      	axisY: {
+      		// title: "Calories per day",
+      		titleFontColor: "#4F81BC",
+      		suffix: " cals"
+      	},
+      	data: [{
+      		indexLabelFontColor: "darkSlateGray",
+      		name: "views",
+      		type: "area",
+          color: "#28a745",
+      		yValueFormatString: "#,##0.0cals",
+      		dataPoints: [
+      			{ x: new Date(2019, 02, 1), y: 1300},
+      			{ x: new Date(2019, 05, 2), y: 1700},
+      			{ x: new Date(2019, 08, 1), y: 2200},
+      			{ x: new Date(2019, 11, 1), y: 1200},
+      			{ x: new Date(2020, 02, 1), y: 1578},
+      			{ x: new Date(2020, 05, 1), y: 2602},
+      			{ x: new Date(2020, 08, 1), y: 1234},
+      			{ x: new Date(2020, 11, 1), y: 534},
+      		]
+      	}]
+      });
+      chart.render();
+
+      }
+      </script>
+  </body>
+</html>
